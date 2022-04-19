@@ -6,7 +6,7 @@
   <!--      style="width: 200px; height: 200px"-->
   <!--    >-->
   <!--  </q-page>-->
-  <div style="width: 100%; height: 40vw">
+  <div style="width: 100%; height: 60vw">
     <q-carousel
       swipeable
       animated
@@ -19,12 +19,13 @@
       :autoplay="autoplay"
       @mouseenter="autoplay = false"
       @mouseleave="autoplay = true"
-      style="height:100%"
+      height="100%"
     >
-      <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg"/>
-      <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg"/>
-      <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg"/>
-      <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg"/>
+      <q-carousel-slide v-for="(ad) in advertiseList" :name=ad.id :img-src="picUrl + ad.picture" style="height: 100%"></q-carousel-slide>
+<!--      <q-carousel-slide :name="10" img-src="https://cdn.quasar.dev/img/mountains.jpg" />-->
+<!--      <q-carousel-slide :name="20" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />-->
+<!--      <q-carousel-slide :name="30" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />-->
+<!--      <q-carousel-slide :name="40" img-src="https://cdn.quasar.dev/img/quasar.jpg" />-->
     </q-carousel>
   </div>
   <q-table
@@ -55,7 +56,7 @@
         <q-space/>
         <q-btn style="width: 100%;" :ripple="{ center: true }" color="secondary" label="重置条件"
                no-caps @click="clearForm"/>
-        <q-btn :loading="false" color="primary" @click="getBooks" style="width: 100%">
+        <q-btn :loading="loading" color="primary" @click="getBooks" style="width: 100%">
           搜索
           <template v-slot:loading>
             <q-spinner-hourglass class="on-left"/>
@@ -67,25 +68,25 @@
     <template v-slot:top v-if="$q.screen.gt.sm">
         <q-input color="purple-12" v-model="queryForm.name" label="书名" clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="label"/>
           </template>
         </q-input>
         <q-select color="purple-12" v-model="queryForm.press" :options="pressList" label="出版社" style="width: 200px"
                   clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="reorder"/>
           </template>
         </q-select>
         <q-select color="purple-12" v-model="queryForm.category" :options="categoryList" label="分类" style="width: 200px"
                   clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="reorder"/>
           </template>
         </q-select>
         <q-space/>
         <q-btn style="width: 150px; margin-right: 20px" :ripple="{ center: true }" color="secondary" label="重置条件"
                no-caps @click="clearForm"/>
-        <q-btn :loading="false" color="primary" @click="getBooks" style="width: 150px">
+        <q-btn :loading="loading" color="primary" @click="getBooks" style="width: 150px">
           搜索
           <template v-slot:loading>
             <q-spinner-hourglass class="on-left"/>
@@ -147,8 +148,14 @@ export default defineComponent({
     const bookList = ref([])
     const pressList = ref([])
     const categoryList = ref([])
+    const advertiseList = ref([])
     const picUrl = 'http://bookadmin.ctyring.top/erupt-attachment/'
     const queryForm = ref({})
+    const getAdvertise = async () => {
+      const {data: res} = await api.get('/advertise')
+      advertiseList.value = res.data
+      console.log(advertiseList.value)
+    }
     const getCategory = async () => {
       const {data: res} = await api.get('/category')
       res.data.forEach((value, index, array) => {
@@ -229,11 +236,12 @@ export default defineComponent({
         align: 'center'
       }
     ]
+    getAdvertise()
     getBooks()
     getPress()
     getCategory()
     return {
-      loading, queryForm, picUrl, bookList, page, size, columns, pressList, categoryList, center,
+      loading, queryForm, picUrl, bookList, page, size, columns, pressList, categoryList, center, advertiseList,
       getBooks, clearForm,
       slide: ref(1),
       autoplay: ref(true)
