@@ -1,11 +1,4 @@
 <template>
-  <!--  <q-page class="flex flex-center">-->
-  <!--    <img-->
-  <!--      alt="Quasar logo"-->
-  <!--      src="~assets/quasar-logo-vertical.svg"-->
-  <!--      style="width: 200px; height: 200px"-->
-  <!--    >-->
-  <!--  </q-page>-->
   <div style="width: 100%; height: 60vw">
     <q-carousel
       swipeable
@@ -33,9 +26,16 @@
     :rows="bookList"
     :columns="columns"
     rows-per-page-label="每页记录数"
+    :visible-columns="visibleColumns"
   >
     <template v-slot:top v-if="$q.screen.lt.md">
       <div style="width: 100%; display: flex; flex-direction: column; justify-content: space-around; align-items: stretch;">
+        <div class="q-pa-md">
+          <q-btn-group spread>
+            <q-btn color="info" label="我要买书" icon="ion-heart" style="width: 50%" @click="querySale"/>
+            <q-btn color="secondary" label="我要卖书" icon="ion-bulb" style="width: 50%" @click="queryPurchase"/>
+          </q-btn-group>
+        </div>
         <q-input color="purple-12" v-model="queryForm.name" label="书名" clearable>
           <template v-slot:prepend>
             <q-icon name="event"/>
@@ -66,6 +66,10 @@
       </div>
     </template>
     <template v-slot:top v-if="$q.screen.gt.sm">
+        <q-btn-group spread style="display:block; width: 100%">
+          <q-btn color="info" label="我要买书" icon="ion-heart" style="width: 50%" @click="querySale"/>
+          <q-btn color="secondary" label="我要卖书" icon="ion-bulb" style="width: 50%" @click="queryPurchase"/>
+        </q-btn-group>
         <q-input color="purple-12" v-model="queryForm.name" label="书名" clearable>
           <template v-slot:prepend>
             <q-icon name="label"/>
@@ -114,9 +118,15 @@
         <q-td key="pressName" :props="props">
           {{ props.row.pressName }}
         </q-td>
-        <q-td key="price" :props="props">
-          {{ parseFloat(props.row.price).toFixed(2) }}
+        <q-td key="salePrice" :props="props">
+          {{ parseFloat(props.row.salePrice).toFixed(2) }}
         </q-td>
+        <q-td key="purchasePrice" :props="props">
+          {{ parseFloat(props.row.purchasePrice).toFixed(2) }}
+        </q-td>
+<!--        <q-td key="purchasePrice" :props="props" v-if="queryForm.isPurchase !== ''">-->
+<!--          {{ parseFloat(props.row.purchasePrice).toFixed(2) }}-->
+<!--        </q-td>-->
         <q-td key="inventory" :props="props">
           {{ props.row.inventory }}
         </q-td>
@@ -124,6 +134,15 @@
           {{ props.row.des }}
         </q-td>
       </q-tr>
+    </template>
+    <template v-slot:no-data="{ icon, message, filter }">
+      <div class="full-width row flex-center text-accent q-gutter-sm">
+        <q-icon size="2em" name="sentiment_dissatisfied" />
+        <span>
+            非常抱歉... 没有找到相关内容
+          </span>
+        <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
+      </div>
     </template>
   </q-table>
 
@@ -136,6 +155,7 @@ import {api} from "boot/axios"
 export default defineComponent({
   name: 'PageIndex',
   setup() {
+    const router = ref(0);
     const center = {
       display: 'flex',
       'flex-direction': 'column',
@@ -149,8 +169,26 @@ export default defineComponent({
     const pressList = ref([])
     const categoryList = ref([])
     const advertiseList = ref([])
-    const picUrl = 'http://bookadmin.ctyring.top/erupt-attachment/'
-    const queryForm = ref({})
+    const picUrl = 'http://124.221.104.172:9999/erupt-attachment'
+    const visibleColumns = ref(['isbn', 'name', 'picture', 'categoryName', 'inventory', 'des', 'salePrice'])
+    const queryForm = ref({
+      isSale:true,
+      isPurchase:''
+    })
+    const querySale = async () => {
+      queryForm.value.isSale = true
+      queryForm.value.isPurchase = ''
+      visibleColumns.value.splice(visibleColumns.value.length-1, 1)
+      visibleColumns.value.push('salePrice')
+      await getBooks()
+    }
+    const queryPurchase = async () => {
+      queryForm.value.isSale = ''
+      queryForm.value.isPurchase = true
+      visibleColumns.value.splice(visibleColumns.value.length-1, 1)
+      visibleColumns.value.push('purchasePrice')
+      await getBooks()
+    }
     const getAdvertise = async () => {
       const {data: res} = await api.get('/advertise')
       advertiseList.value = res.data
@@ -218,9 +256,15 @@ export default defineComponent({
         align: 'center'
       },
       {
-        name: 'price',
-        label: '价格',
-        field: 'price',
+        name: 'salePrice',
+        label: '出售价格',
+        field: 'salePrice',
+        align: 'center'
+      },
+      {
+        name: 'purchasePrice',
+        label: '收购价格',
+        field: 'purchasePrice',
         align: 'center'
       },
       {
@@ -236,13 +280,16 @@ export default defineComponent({
         align: 'center'
       }
     ]
+
     getAdvertise()
     getBooks()
     getPress()
     getCategory()
     return {
-      loading, queryForm, picUrl, bookList, page, size, columns, pressList, categoryList, center, advertiseList,
-      getBooks, clearForm,
+      router,loading, queryForm, picUrl, bookList, page, size, columns, pressList, categoryList, center,
+      advertiseList,visibleColumns,
+      getBooks, clearForm,querySale, queryPurchase,
+
       slide: ref(1),
       autoplay: ref(true)
     }
