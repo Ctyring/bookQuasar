@@ -12,13 +12,8 @@
       :autoplay="autoplay"
       @mouseenter="autoplay = false"
       @mouseleave="autoplay = true"
-      height="100%"
-    >
+      height="100%">
       <q-carousel-slide v-for="(ad) in advertiseList" :name=ad.id :img-src="picUrl + ad.picture" style="height: 100%"></q-carousel-slide>
-<!--      <q-carousel-slide :name="10" img-src="https://cdn.quasar.dev/img/mountains.jpg" />-->
-<!--      <q-carousel-slide :name="20" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />-->
-<!--      <q-carousel-slide :name="30" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />-->
-<!--      <q-carousel-slide :name="40" img-src="https://cdn.quasar.dev/img/quasar.jpg" />-->
     </q-carousel>
   </div>
   <q-table
@@ -38,19 +33,19 @@
         </div>
         <q-input color="purple-12" v-model="queryForm.name" label="书名" clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="label"/>
           </template>
         </q-input>
-        <q-select color="purple-12" v-model="queryForm.press" :options="pressList" label="出版社" style="100%"
+        <q-select color="purple-12" v-model="queryForm.press" :options="pressList" label="出版社" style="width: 200px"
                   clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="reorder"/>
           </template>
         </q-select>
-        <q-select color="purple-12" v-model="queryForm.category" :options="categoryList" label="分类" style="100%"
+        <q-select color="purple-12" v-model="queryForm.category" :options="categoryList" label="分类" style="width: 200px"
                   clearable>
           <template v-slot:prepend>
-            <q-icon name="event"/>
+            <q-icon name="reorder"/>
           </template>
         </q-select>
         <q-space/>
@@ -173,17 +168,17 @@ export default defineComponent({
     const visibleColumns = ref(['isbn', 'name', 'picture', 'categoryName', 'inventory', 'des', 'salePrice'])
     const queryForm = ref({
       isSale:true,
-      isPurchase:''
+      isPurchase:null
     })
     const querySale = async () => {
       queryForm.value.isSale = true
-      queryForm.value.isPurchase = ''
+      queryForm.value.isPurchase = null
       visibleColumns.value.splice(visibleColumns.value.length-1, 1)
       visibleColumns.value.push('salePrice')
       await getBooks()
     }
     const queryPurchase = async () => {
-      queryForm.value.isSale = ''
+      queryForm.value.isSale = null
       queryForm.value.isPurchase = true
       visibleColumns.value.splice(visibleColumns.value.length-1, 1)
       visibleColumns.value.push('purchasePrice')
@@ -192,7 +187,6 @@ export default defineComponent({
     const getAdvertise = async () => {
       const {data: res} = await api.get('/advertise')
       advertiseList.value = res.data
-      console.log(advertiseList.value)
     }
     const getCategory = async () => {
       const {data: res} = await api.get('/category')
@@ -202,7 +196,6 @@ export default defineComponent({
     }
     const getPress = async () => {
       const {data: res} = await api.get('/press')
-      console.log(res);
       res.data.forEach((value, index, array) => {
         pressList.value.push({label: value.name, value: value.id})
       })
