@@ -1,9 +1,10 @@
 <template>
-  <div style="width: 100%; height: 60vw">
+  <div style="width: 100%; height:55vw">
     <q-carousel
       swipeable
       animated
       v-model="slide"
+      v-model:advertiseList="advertiseList"
       thumbnails
       infinite
       arrows
@@ -146,7 +147,6 @@
 <script>
 import {defineComponent, reactive, ref} from 'vue';
 import {api} from "boot/axios"
-
 export default defineComponent({
   name: 'PageIndex',
   setup() {
@@ -164,7 +164,7 @@ export default defineComponent({
     const pressList = ref([])
     const categoryList = ref([])
     const advertiseList = ref([])
-    const picUrl = 'http://124.221.104.172:9999/erupt-attachment'
+    const picUrl = 'http://localhost:10001/erupt-attachment'
     const visibleColumns = ref(['isbn', 'name', 'picture', 'categoryName', 'inventory', 'des', 'salePrice'])
     const queryForm = ref({
       isSale:true,
@@ -185,17 +185,17 @@ export default defineComponent({
       await getBooks()
     }
     const getAdvertise = async () => {
-      const {data: res} = await api.get('/advertise')
+      const {data: res} = await api.get('/book/advertise')
       advertiseList.value = res.data
     }
     const getCategory = async () => {
-      const {data: res} = await api.get('/category')
+      const {data: res} = await api.get('/book/category')
       res.data.forEach((value, index, array) => {
         categoryList.value.push({label: value.name, value: value.id})
       })
     }
     const getPress = async () => {
-      const {data: res} = await api.get('/press')
+      const {data: res} = await api.get('/book/press')
       res.data.forEach((value, index, array) => {
         pressList.value.push({label: value.name, value: value.id})
       })
@@ -210,7 +210,7 @@ export default defineComponent({
       if (queryForm.value.category != null) {
         form.category = queryForm.value.category.value + ''
       }
-      const {data: res} = await api.post('/book/search/' + page.value + '/' + size.value, form)
+      const {data: res} = await api.post('/book/book/search/' + page.value + '/' + size.value, form)
       bookList.value = res.data.rows
       loading.value = false
     }
