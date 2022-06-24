@@ -137,15 +137,14 @@ export default {
           color: 'green',
           position:'top'
         })
-        store().commit('SET_TOKEN',res.result.token)
-        store().commit('SET_AVATAR', res.result.userInfo.avatar)
-        store().commit('SET_USERNAME', res.result.userInfo.username)
-        store().commit('SET_SEX', res.result.userInfo.sex)
-        store().commit('SET_BIRTHDAY', res.result.userInfo.birthday)
-        store().commit('SET_EMAIL', res.result.userInfo.email)
-        store().commit('SET_ID', res.result.userInfo.id)
-        store().commit('SET_USERIDENTITY', res.result.userInfo.userIdentity)
-
+        store().commit('SET_TOKEN',res.data.token)
+        store().commit('SET_AVATAR', res.data.userInfo.picture)
+        store().commit('SET_USERNAME', res.data.userInfo.username)
+        store().commit('SET_SEX', res.data.userInfo.gender)
+        store().commit('SET_BIRTHDAY', res.data.userInfo.birthday)
+        store().commit('SET_EMAIL', res.data.userInfo.email)
+        store().commit('SET_ID', res.data.userInfo.id)
+        store().commit('SET_ROLE', res.data.userInfo.role)
         await this.$router.push('/')
       }else{
         this.$q.notify({

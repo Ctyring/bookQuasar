@@ -185,7 +185,7 @@ export default defineComponent({
       await getBooks()
     }
     const getAdvertise = async () => {
-      const {data: res} = await api.get('/book/advertise')
+      const {data: res} = await api.get('/system/advertise')
       advertiseList.value = res.data
     }
     const getCategory = async () => {

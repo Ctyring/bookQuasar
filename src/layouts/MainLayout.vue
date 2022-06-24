@@ -68,19 +68,19 @@
       <q-list bordered>
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon color="info" name="ti-home" />
+            <q-icon color="info" name="ti-home"/>
           </q-item-section>
           <q-item-section>首页</q-item-section>
         </q-item>
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon color="info" name="ti-receipt" />
+            <q-icon color="info" name="ti-receipt"/>
           </q-item-section>
           <q-item-section>留言墙</q-item-section>
         </q-item>
         <q-item clickable v-ripple>
           <q-item-section avatar>
-            <q-icon color="info" name="ti-calendar" />
+            <q-icon color="info" name="ti-calendar"/>
           </q-item-section>
           <q-item-section>作品</q-item-section>
         </q-item>
@@ -99,13 +99,12 @@
 import {computed, defineComponent, ref} from 'vue'
 import store from "src/store";
 import {LocalStorage, morph} from "quasar";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
+
 export default defineComponent({
   name: 'MainLayout',
 
-  components: {
-
-  },
+  components: {},
 
   setup() {
     const toggle = ref(true)
@@ -125,9 +124,8 @@ export default defineComponent({
       return store().getters.GET_TOKEN ?? '' !== ''
     })
     const avatar = computed(() => {
-      return 'img:' + (store().getters.GET_AVATAR != '' ? store().getters.GET_AVATAR : 'https://pic.imgdb.cn/item/620874352ab3f51d9141099f.jpg')
+      return 'img:' + (store().getters.GET_AVATAR ? store().getters.GET_AVATAR : 'https://pic.imgdb.cn/item/620874352ab3f51d9141099f.jpg')
     })
-    // console.log(localStorage.getItem('avatar'))
     const mor = (state) => {
       if (state !== toggle.value) {
         const getDiv = () => refDiv.value
@@ -147,12 +145,11 @@ export default defineComponent({
     }
     const listenScroll = (details) => {
       // console.log(details)
-      if (details.direction === 'down'){
-        mor(false)
-      }
-      else if (details.direction === 'up'){
-        mor(true)
-      }
+      // if (details.direction === 'down') {
+      //   mor(false)
+      // } else if (details.direction === 'up') {
+      //   mor(true)
+      // }
     }
     return {
       listenScroll,

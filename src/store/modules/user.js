@@ -45,10 +45,10 @@ const user = {
             localStorage.setItem('id', id)
             state.id = id
         },
-        SET_USERIDENTITY: (state, userIdentity) => {
-            localStorage.setItem('userIdentity', userIdentity)
+        SET_ROLE: (state, userIdentity) => {
+            localStorage.setItem('role', userIdentity)
             state.userIdentity = userIdentity
-            console.log("userIdentity" + localStorage.getItem('userIdentity'))
+            // console.log("userIdentity" + localStorage.getItem('userIdentity'))
         },
     },
     getters: {
@@ -74,7 +74,7 @@ const user = {
             return (state.id === '' ? localStorage.getItem('id') : state.id)
         },
 
-        GET_USERIDENTITY(state) {
+        GET_ROLE(state) {
             return (state.userIdentity === '' ? localStorage.getItem('userIdentity') : state.userIdentity)
         },
 
